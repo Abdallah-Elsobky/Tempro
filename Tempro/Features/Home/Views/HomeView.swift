@@ -26,7 +26,7 @@ struct HomeView: View {
                     
                     BottomStatsSection(viewModel: viewModel)
                     
-                    LifestyleSection()
+                    LifestyleSection(items: viewModel.lifestyleItems)
                     
                     if let error = viewModel.errorMessage {
                         errorBanner(error)

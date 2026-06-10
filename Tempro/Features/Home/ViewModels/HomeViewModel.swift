@@ -134,5 +134,144 @@ final class HomeViewModel: ObservableObject {
     var rawHumidity: Double { Double(weatherData?.current.humidity ?? 0) }
     var rawVisibility: Double { weatherData?.current.vis_km ?? 0 }
     var rawPressure: Double { weatherData?.current.pressure_mb ?? 1013 }
+    
+    var lifestyleItems: [LifestyleItem] {
+        guard let current = weatherData?.current else {
+            return [
+                LifestyleItem(iconName: "figure.run", label: "Running: --"),
+                LifestyleItem(iconName: "fish", label: "Fishing: --"),
+                LifestyleItem(iconName: "figure.hiking", label: "Hiking: --"),
+                LifestyleItem(iconName: "hanger", label: "Clothing: --"),
+                LifestyleItem(iconName: "medical.thermometer", label: "Cold risk: --"),
+                LifestyleItem(iconName: "bandage", label: "Joint pain: --"),
+                LifestyleItem(iconName: "sparkles", label: "Stargazing: --"),
+                LifestyleItem(iconName: "flag.fill", label: "Golfing: --"),
+                LifestyleItem(iconName: "airplane", label: "Flight delays: --")
+            ]
+        }
+        
+        let temp = current.temp_c
+        let code = current.condition.code
+        let feels = current.feelslike_c
+        let humidity = current.humidity
+        let vis = current.vis_km
+        let pressure = current.pressure_mb
+        
+        let isRainyOrStormy = [1063, 1087, 1180, 1183, 1186, 1189, 1192, 1195, 1240, 1243, 1246, 1273, 1276].contains(code)
+        let isSnowy = [1066, 1210, 1213, 1216, 1219, 1222, 1225, 1279, 1282].contains(code)
+        let isFoggy = [1030, 1135].contains(code)
+        let isOvercast = [1006, 1009].contains(code)
+        
+        let runningLabel: String
+        if isRainyOrStormy || isSnowy {
+            runningLabel = "Unsuitable: Rain/Snow"
+        } else if temp > 30 {
+            runningLabel = "Too hot for running"
+        } else if temp < 5 {
+            runningLabel = "Too cold for running"
+        } else if humidity > 85 {
+            runningLabel = "Humid: Hard breathing"
+        } else {
+            runningLabel = "Great for running"
+        }
+        
+        let fishingLabel: String
+        if isRainyOrStormy {
+            fishingLabel = "Poor: Storm risk"
+        } else if pressure >= 1010 && pressure <= 1020 {
+            fishingLabel = "Ideal: Stable pressure"
+        } else if pressure < 1005 {
+            fishingLabel = "Poor: Low pressure"
+        } else {
+            fishingLabel = "Fair fishing conditions"
+        }
+        
+        let hikingLabel: String
+        if isRainyOrStormy || isSnowy {
+            hikingLabel = "Avoid: Storm/Precipitation"
+        } else if isFoggy || vis < 5.0 {
+            hikingLabel = "Foggy: Poor path visibility"
+        } else if temp > 32 {
+            hikingLabel = "Too hot for hiking"
+        } else if temp < 5 {
+            hikingLabel = "Too cold for hiking"
+        } else {
+            hikingLabel = "Suitable for hiking"
+        }
+        
+        let clothingLabel: String
+        if feels > 25 {
+            clothingLabel = "Short sleeves & shorts"
+        } else if feels > 15 {
+            clothingLabel = "Light jacket or sweater"
+        } else if feels > 5 {
+            clothingLabel = "Wear a warm coat"
+        } else {
+            clothingLabel = "Heavy winter layers"
+        }
+        
+        let coldRiskLabel: String
+        if temp < 5 {
+            coldRiskLabel = "Cold risk: High"
+        } else if temp < 15 {
+            coldRiskLabel = "Cold risk: Moderate"
+        } else {
+            coldRiskLabel = "Cold risk: Low"
+        }
+        
+        let jointPainLabel: String
+        if pressure < 1008 && humidity > 75 {
+            jointPainLabel = "Joint pain risk: High"
+        } else if temp < 10 {
+            jointPainLabel = "Joint pain risk: Moderate"
+        } else {
+            jointPainLabel = "Joint pain risk: Low"
+        }
+        
+        let stargazingLabel: String
+        if isFoggy || isRainyOrStormy {
+            stargazingLabel = "Stargazing: Poor (Rain/Fog)"
+        } else if isOvercast {
+            stargazingLabel = "Stargazing: Poor (Cloudy)"
+        } else if code == 1000 && vis >= 10.0 {
+            stargazingLabel = "Stargazing: Excellent"
+        } else if code == 1003 {
+            stargazingLabel = "Stargazing: Fair"
+        } else {
+            stargazingLabel = "Stargazing: Fair"
+        }
+        
+        let golfingLabel: String
+        if isRainyOrStormy || isSnowy {
+            golfingLabel = "Avoid: Wet course"
+        } else if temp > 35 || temp < 5 {
+            golfingLabel = "Poor: Extreme temp"
+        } else if vis < 5.0 {
+            golfingLabel = "Poor: Low visibility"
+        } else {
+            golfingLabel = "Golfing: Excellent"
+        }
+        
+        let flightLabel: String
+        if code == 1087 || isSnowy || (isRainyOrStormy && vis < 3.0) {
+            flightLabel = "Flight delays: High risk"
+        } else if isFoggy || vis < 5.0 {
+            flightLabel = "Flight delays: Moderate"
+        } else {
+            flightLabel = "Low flight delays"
+        }
+        
+        return [
+            LifestyleItem(iconName: "figure.run", label: runningLabel),
+            LifestyleItem(iconName: "fish", label: fishingLabel),
+            LifestyleItem(iconName: "figure.hiking", label: hikingLabel),
+            LifestyleItem(iconName: "hanger", label: clothingLabel),
+            LifestyleItem(iconName: "medical.thermometer", label: coldRiskLabel),
+            LifestyleItem(iconName: "bandage", label: jointPainLabel),
+            LifestyleItem(iconName: "sparkles", label: stargazingLabel),
+            LifestyleItem(iconName: "flag.fill", label: golfingLabel),
+            LifestyleItem(iconName: "airplane", label: flightLabel)
+        ]
+    }
 }
 
