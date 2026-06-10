@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		31F56123DD329A1B3923D753 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329EA93FE3A247BFB116A007 /* LocationManager.swift */; };
+		6D3A9C622FD9B55A00FBBD69 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 46028932844A977CD4FE93B1 /* Alamofire */; };
 		E7A2703B0C942AC33EAF11A9 /* APIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FF3AF623071A62ED3161EBA /* APIConstants.swift */; };
 /* End PBXBuildFile section */
 
@@ -20,8 +21,6 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		6D8D65512FD8DD4100E68A99 /* Tempro */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
 			path = Tempro;
 			sourceTree = "<group>";
 		};
@@ -32,6 +31,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6D3A9C622FD9B55A00FBBD69 /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -43,7 +43,6 @@
 			children = (
 				5FF3AF623071A62ED3161EBA /* APIConstants.swift */,
 			);
-			name = Network;
 			path = Network;
 			sourceTree = "<group>";
 		};
@@ -69,7 +68,6 @@
 			children = (
 				D0FB39D938C426A794B1B354 /* Core */,
 			);
-			name = Tempro;
 			path = Tempro;
 			sourceTree = "<group>";
 		};
@@ -79,7 +77,6 @@
 				0B46112BC75204140198BD90 /* Network */,
 				E57FCBAA159B7E00700721CD /* Location */,
 			);
-			name = Core;
 			path = Core;
 			sourceTree = "<group>";
 		};
@@ -88,7 +85,6 @@
 			children = (
 				329EA93FE3A247BFB116A007 /* LocationManager.swift */,
 			);
-			name = Location;
 			path = Location;
 			sourceTree = "<group>";
 		};
