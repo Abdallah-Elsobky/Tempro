@@ -2,57 +2,36 @@ import SwiftUI
 
 @MainActor
 struct HomeView: View {
-    @StateObject private var viewModel: HomeViewModel
+    @EnvironmentObject var locationsStore: LocationsStore
     @State private var showSearch = false
-    
-    init(viewModel: HomeViewModel) {
-        _viewModel = StateObject(wrappedValue: viewModel)
-    }
-    
-    init() {
-        _viewModel = StateObject(wrappedValue: HomeViewModel())
-    }
+    @State private var activeTab = 0
     
     var body: some View {
         ZStack {
-            backgroundLayer
-            
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 20) {
-                    heroSection
-                        .padding(.top, 40)
-                    
-                    ForecastListSection(viewModel: viewModel)
-                    
-                    BottomStatsSection(viewModel: viewModel)
-                    
-                    LifestyleSection(items: viewModel.lifestyleItems)
-                    
-                    if let error = viewModel.errorMessage {
-                        errorBanner(error)
-                    }
+            TabView(selection: $activeTab) {
+                LocationWeatherPageView(fixedLocation: nil)
+                    .tag(0)
+                
+                ForEach(Array(locationsStore.savedLocations.enumerated()), id: \.element.id) { index, loc in
+                    LocationWeatherPageView(fixedLocation: loc)
+                        .tag(index + 1)
                 }
-                .padding(.horizontal, 16)
-                .padding(.bottom, 110)
             }
-            .refreshable {
-                await viewModel.loadWeather()
-            }
+            .tabViewStyle(.page(indexDisplayMode: .always))
+            .ignoresSafeArea()
             
             VStack {
                 Spacer()
                 floatingBottomTabBar
             }
         }
-        .task {
-            await viewModel.loadWeather()
-        }
         .sheet(isPresented: $showSearch) {
-            SearchView()
+            SearchView(activeTab: $activeTab)
+                .presentationBackground(.ultraThinMaterial)
         }
-        .overlay {
-            if viewModel.isLoading {
-                LoadingOverlay()
+        .onChange(of: locationsStore.savedLocations) { newLocations in
+            if activeTab > newLocations.count {
+                activeTab = newLocations.count
             }
         }
     }
@@ -84,52 +63,11 @@ struct HomeView: View {
         .padding(.horizontal, 24)
         .safeAreaPadding(.bottom, 10)
     }
+}
 
-    private var heroSection: some View {
-        VStack(spacing: 4) {
-            Text(viewModel.locationName)
-                .font(.system(size: 34, weight: .medium, design: .rounded))
-            
-            Text(viewModel.currentTemp)
-                .font(.system(size: 96, weight: .thin, design: .rounded))
-                .padding(.leading, 14)
-            
-            Text(viewModel.conditionText)
-                .font(.system(size: 20, weight: .medium, design: .rounded))
-                .foregroundColor(.white.opacity(0.7))
-            
-            HStack(spacing: 12) {
-                Text(viewModel.maxTemp)
-                Text(viewModel.minTemp)
-                    .foregroundColor(.white.opacity(0.7))
-            }
-            .font(.system(size: 20, weight: .medium, design: .rounded))
-        }
-        .foregroundColor(.white)
-    }
-
-    private var backgroundLayer: some View {
-        GeometryReader { proxy in
-            Image(viewModel.isMorning ? "morning_bg" : "evening_bg")
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: proxy.size.width, height: proxy.size.height)
-        }
-        .ignoresSafeArea()
-    }
-
-    private func errorBanner(_ message: String) -> some View {
-        HStack(spacing: 10) {
-            Image(systemName: "exclamationmark.triangle.fill")
-            Text(message)
-                .font(.system(size: 14, weight: .medium, design: .rounded))
-        }
-        .foregroundColor(.white)
-        .padding(.vertical, 12)
-        .padding(.horizontal, 16)
-        .background(Color.red.opacity(0.25))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-    }
+#Preview {
+    HomeView()
+        .environmentObject(LocationsStore())
 }
 
 struct GlassBackground: View {
@@ -146,4 +84,3 @@ struct GlassBackground: View {
             )
     }
 }
-

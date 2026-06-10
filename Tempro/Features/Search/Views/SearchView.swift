@@ -3,12 +3,13 @@ import SwiftUI
 struct SearchView: View {
     @StateObject private var viewModel = SearchViewModel()
     @EnvironmentObject var locationsStore: LocationsStore
+    @Binding var activeTab: Int
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         NavigationStack {
             ZStack {
-                Color.black.ignoresSafeArea()
+                Color.clear.ignoresSafeArea()
                 
                 VStack(spacing: 16) {
                     searchBar
@@ -36,7 +37,7 @@ struct SearchView: View {
                         }
                     } else {
                         if !locationsStore.savedLocations.isEmpty {
-                            SavedLocationsView()
+                            SavedLocationsView(activeTab: $activeTab)
                         } else {
                             VStack(spacing: 8) {
                                 Image(systemName: "magnifyingglass")
@@ -66,8 +67,8 @@ struct SearchView: View {
                 }
             }
             .toolbarBackground(.visible, for: .navigationBar)
-            .toolbarBackground(Color.black, for: .navigationBar)
-            .navigationBarColorScheme(.dark)
+            .toolbarBackground(Color.clear, for: .navigationBar)
+            .preferredColorScheme(.dark)
         }
     }
     
@@ -100,43 +101,49 @@ struct SearchView: View {
     }
     
     private var searchResultsList: some View {
-        List(viewModel.searchResults) { result in
-            Button(action: {
-                let saved = viewModel.toSavedLocation(result)
-                locationsStore.add(saved)
-                viewModel.searchText = ""
-                dismiss()
-            }) {
-                HStack {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(result.name)
-                            .font(.system(size: 16, weight: .bold, design: .rounded))
-                            .foregroundColor(.white)
-                        Text(result.country)
-                            .font(.system(size: 13, weight: .regular, design: .rounded))
-                            .foregroundColor(.white.opacity(0.6))
+        ScrollView(showsIndicators: false) {
+            LazyVStack(spacing: 12) {
+                ForEach(viewModel.searchResults) { result in
+                    Button(action: {
+                        let saved = viewModel.toSavedLocation(result)
+                        locationsStore.add(saved)
+                        activeTab = locationsStore.savedLocations.count
+                        viewModel.searchText = ""
+                        dismiss()
+                    }) {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(result.name)
+                                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                                    .foregroundColor(.white)
+                                Text(result.country)
+                                    .font(.system(size: 13, weight: .regular, design: .rounded))
+                                    .foregroundColor(.white.opacity(0.6))
+                            }
+                            Spacer()
+                            Image(systemName: "plus.circle.fill")
+                                .foregroundColor(.blue)
+                                .font(.system(size: 20))
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 14)
+                        .background(Color.white.opacity(0.06))
+                        .cornerRadius(16)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16)
+                                .stroke(Color.white.opacity(0.12), lineWidth: 0.5)
+                        )
                     }
-                    Spacer()
-                    Image(systemName: "plus.circle.fill")
-                        .foregroundColor(.blue)
-                        .font(.system(size: 20))
+                    .buttonStyle(.plain)
                 }
-                .padding(.vertical, 4)
             }
-            .listRowBackground(Color.white.opacity(0.05))
+            .padding(.horizontal)
         }
-        .listStyle(.plain)
-        .scrollContentBackground(.hidden)
-    }
-}
-
-extension View {
-    func navigationBarColorScheme(_ scheme: ColorScheme) -> some View {
-        self.preferredColorScheme(scheme)
     }
 }
 
 #Preview {
-    SearchView()
+    SearchView(activeTab: .constant(0))
         .environmentObject(LocationsStore())
+        .background(Color.black.opacity(0.85))
 }
