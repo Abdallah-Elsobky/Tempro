@@ -1,10 +1,13 @@
 import SwiftUI
 
 struct HourlyForecastView: View {
-    @StateObject private var viewModel = HourlyForecastViewModel()
+    @StateObject private var viewModel: HourlyForecastViewModel
+    
+    init(selectedDay: ForecastDay? = nil, isMorning: Bool = true) {
+        _viewModel = StateObject(wrappedValue: HourlyForecastViewModel(selectedDay: selectedDay, isMorning: isMorning))
+    }
     
     var body: some View {
-        // TODO: Sprint 3 — implement horizontal or list hourly forecast view
         VStack {
             Text("Hourly Forecast View Stub")
                 .padding()
@@ -15,3 +18,4 @@ struct HourlyForecastView: View {
 #Preview {
     HourlyForecastView()
 }
+
