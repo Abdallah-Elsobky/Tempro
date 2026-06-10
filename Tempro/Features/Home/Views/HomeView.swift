@@ -47,6 +47,14 @@ struct HomeView: View {
         .task {
             await viewModel.loadWeather()
         }
+        .sheet(isPresented: $showSearch) {
+            SearchView()
+        }
+        .overlay {
+            if viewModel.isLoading {
+                LoadingOverlay()
+            }
+        }
     }
     
     private var floatingBottomTabBar: some View {
