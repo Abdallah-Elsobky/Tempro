@@ -6,13 +6,22 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		31F56123DD329A1B3923D753 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329EA93FE3A247BFB116A007 /* LocationManager.swift */; };
+		E7A2703B0C942AC33EAF11A9 /* APIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FF3AF623071A62ED3161EBA /* APIConstants.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
+		329EA93FE3A247BFB116A007 /* LocationManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		5FF3AF623071A62ED3161EBA /* APIConstants.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = APIConstants.swift; sourceTree = "<group>"; };
 		6D8D654F2FD8DD4100E68A99 /* Tempro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tempro.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		6D8D65512FD8DD4100E68A99 /* Tempro */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = Tempro;
 			sourceTree = "<group>";
 		};
@@ -29,11 +38,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0B46112BC75204140198BD90 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				5FF3AF623071A62ED3161EBA /* APIConstants.swift */,
+			);
+			name = Network;
+			path = Network;
+			sourceTree = "<group>";
+		};
 		6D8D65462FD8DD4100E68A99 = {
 			isa = PBXGroup;
 			children = (
 				6D8D65512FD8DD4100E68A99 /* Tempro */,
 				6D8D65502FD8DD4100E68A99 /* Products */,
+				943A3897FED68FF9BEF0EB69 /* Tempro */,
 			);
 			sourceTree = "<group>";
 		};
@@ -43,6 +62,34 @@
 				6D8D654F2FD8DD4100E68A99 /* Tempro.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		943A3897FED68FF9BEF0EB69 /* Tempro */ = {
+			isa = PBXGroup;
+			children = (
+				D0FB39D938C426A794B1B354 /* Core */,
+			);
+			name = Tempro;
+			path = Tempro;
+			sourceTree = "<group>";
+		};
+		D0FB39D938C426A794B1B354 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				0B46112BC75204140198BD90 /* Network */,
+				E57FCBAA159B7E00700721CD /* Location */,
+			);
+			name = Core;
+			path = Core;
+			sourceTree = "<group>";
+		};
+		E57FCBAA159B7E00700721CD /* Location */ = {
+			isa = PBXGroup;
+			children = (
+				329EA93FE3A247BFB116A007 /* LocationManager.swift */,
+			);
+			name = Location;
+			path = Location;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -64,8 +111,6 @@
 				6D8D65512FD8DD4100E68A99 /* Tempro */,
 			);
 			name = Tempro;
-			packageProductDependencies = (
-			);
 			productName = Tempro;
 			productReference = 6D8D654F2FD8DD4100E68A99 /* Tempro.app */;
 			productType = "com.apple.product-type.application";
@@ -119,6 +164,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E7A2703B0C942AC33EAF11A9 /* APIConstants.swift in Sources */,
+				31F56123DD329A1B3923D753 /* LocationManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -253,6 +300,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Asks for permission to use location only while the app is open and active on the screen.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Tempro needs your location to show local weather.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -284,6 +333,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Asks for permission to use location only while the app is open and active on the screen.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Tempro needs your location to show local weather.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
