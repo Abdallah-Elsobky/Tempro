@@ -2,9 +2,15 @@ import Foundation
 
 /// ForecastDay represents weather forecast details for a single day.
 struct ForecastDay: Codable, Identifiable, Sendable {
-    // TODO: Sprint 2 — define Codable properties for daily weather forecast
-    let id: UUID
-    let date: Date
-    let maxTemp: Double
-    let minTemp: Double
+    var id: String { date }
+    let date: String
+    let day: DayInfo
+    let hour: [HourlyForecast]
 }
+
+struct DayInfo: Codable, Sendable {
+    let maxtemp_c: Double
+    let mintemp_c: Double
+    let condition: WeatherCondition
+}
+
