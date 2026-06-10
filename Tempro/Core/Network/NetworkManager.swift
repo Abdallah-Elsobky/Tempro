@@ -1,4 +1,5 @@
 import Foundation
+import Alamofire
 
 protocol NetworkManagerProtocol: Sendable {
     func fetchWeather(lat: Double, lon: Double) async throws -> WeatherResponse
@@ -15,20 +16,18 @@ final class NetworkManager: NetworkManagerProtocol {
             throw NetworkError.invalidURL
         }
         
-        let (data, response) = try await URLSession.shared.data(from: url)
-        
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw NetworkError.noData
-        }
-        
-        guard (200...299).contains(httpResponse.statusCode) else {
-            throw NetworkError.serverError(httpResponse.statusCode)
-        }
-        
         do {
-            let decoder = JSONDecoder()
-            return try decoder.decode(WeatherResponse.self, from: data)
+            return try await AF.request(url)
+                .validate()
+                .serializingDecodable(WeatherResponse.self)
+                .value
         } catch {
+            if let afError = error as? AFError {
+                if case .responseValidationFailed(let reason) = afError,
+                   case .unacceptableStatusCode(let code) = reason {
+                    throw NetworkError.serverError(code)
+                }
+            }
             throw NetworkError.decodingFailed(error)
         }
     }
@@ -38,24 +37,23 @@ final class NetworkManager: NetworkManagerProtocol {
             throw NetworkError.invalidURL
         }
         
-        let (data, response) = try await URLSession.shared.data(from: url)
-        
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw NetworkError.noData
-        }
-        
-        guard (200...299).contains(httpResponse.statusCode) else {
-            throw NetworkError.serverError(httpResponse.statusCode)
-        }
-        
         do {
-            let decoder = JSONDecoder()
-            return try decoder.decode([SearchResult].self, from: data)
+            return try await AF.request(url)
+                .validate()
+                .serializingDecodable([SearchResult].self)
+                .value
         } catch {
+            if let afError = error as? AFError {
+                if case .responseValidationFailed(let reason) = afError,
+                   case .unacceptableStatusCode(let code) = reason {
+                    throw NetworkError.serverError(code)
+                }
+            }
             throw NetworkError.decodingFailed(error)
         }
     }
 }
+
 
 enum NetworkError: Error, LocalizedError, Sendable {
     case invalidURL
