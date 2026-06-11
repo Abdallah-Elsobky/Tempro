@@ -1,6 +1,5 @@
 import Foundation
 
-/// APIEndpoints defines endpoints for the weathercast services.
 enum APIEndpoints {
     static let baseURL = "https://api.weatherapi.com/v1"
     
@@ -29,4 +28,3 @@ enum APIEndpoints {
         return components?.url
     }
 }
-

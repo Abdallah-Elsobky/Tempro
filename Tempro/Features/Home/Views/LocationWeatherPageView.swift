@@ -82,7 +82,7 @@ struct LocationWeatherPageView: View {
         }
         .foregroundColor(.white)
     }
-
+    
     private var backgroundLayer: some View {
         GeometryReader { proxy in
             Image(viewModel.isMorning ? "morning_bg" : "evening_bg")
@@ -92,7 +92,7 @@ struct LocationWeatherPageView: View {
         }
         .ignoresSafeArea()
     }
-
+    
     private func errorBanner(_ message: String) -> some View {
         HStack(spacing: 10) {
             Image(systemName: "exclamationmark.triangle.fill")

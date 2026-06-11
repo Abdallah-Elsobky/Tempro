@@ -29,7 +29,6 @@ final class LocationsStore: ObservableObject {
             let data = try JSONEncoder().encode(savedLocations)
             UserDefaults.standard.set(data, forKey: saveKey)
         } catch {
-            print("Failed to save locations: \(error.localizedDescription)")
         }
     }
     
@@ -38,7 +37,6 @@ final class LocationsStore: ObservableObject {
         do {
             savedLocations = try JSONDecoder().decode([SavedLocation].self, from: data)
         } catch {
-            print("Failed to load locations: \(error.localizedDescription)")
         }
     }
 }

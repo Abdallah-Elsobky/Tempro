@@ -10,7 +10,6 @@ struct BottomStatsSection: View {
         ]
         
         LazyVGrid(columns: columns, spacing: 14) {
-            // ── FEELS LIKE (Handled as Wind in screenshot, but keeping structural contract) ──
             StatCard(
                 icon: "thermometer.medium",
                 title: "Feels like",
@@ -31,14 +30,13 @@ struct BottomStatsSection: View {
                 }
             }
             
-            // ── HUMIDITY ──
             StatCard(
                 icon: "humidity",
                 title: "Humidity",
                 value: String(viewModel.humidity.filter { $0.isNumber }),
                 unit: "%"
             ) {
-                Text("Dry weather, stay hydrated.") // Matches target screenshot copy style
+                Text("Dry weather, stay hydrated.")
                     .font(.system(size: 13, weight: .regular, design: .rounded))
                     .foregroundColor(.white.opacity(0.75))
                     .lineLimit(2)
@@ -46,7 +44,6 @@ struct BottomStatsSection: View {
                     .frame(maxHeight: .infinity, alignment: .bottomLeading)
             }
             
-            // ── VISIBILITY ──
             StatCard(
                 icon: "eye.fill",
                 title: "Visibility",
@@ -73,11 +70,10 @@ struct BottomStatsSection: View {
                 }
             }
             
-            // ── PRESSURE ──
             StatCard(
                 icon: "info.circle",
                 title: "Pressure",
-                value: "", // Left blank intentionally; metric renders inside custom gauge center
+                value: "",
                 unit: ""
             ) {
                 VStack(spacing: 0) {
@@ -101,8 +97,6 @@ struct BottomStatsSection: View {
     }
 }
 
-// MARK: - StatCard Template (Refactored for precise Apple-style layouts)
-
 struct StatCard<Footer: View>: View {
     let icon: String
     let title: String
@@ -112,17 +106,16 @@ struct StatCard<Footer: View>: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // Header Group
             HStack(spacing: 5) {
                 Image(systemName: icon)
                     .font(.system(size: 12, weight: .bold))
+                    .accessibilityLabel("\(title) icon")
                 Text(title)
                     .font(.system(size: 13, weight: .semibold, design: .rounded))
             }
             .foregroundColor(.white.opacity(0.6))
             .padding(.bottom, 6)
             
-            // Primary Value Metrics (Only displays when explicit metric string passed)
             if !value.isEmpty {
                 Group {
                     Text(value)
@@ -135,7 +128,6 @@ struct StatCard<Footer: View>: View {
                 .padding(.bottom, 4)
             }
             
-            // Dynamic Context Area
             footer
                 .frame(maxWidth: .infinity, alignment: .leading)
             
@@ -143,12 +135,13 @@ struct StatCard<Footer: View>: View {
         }
         .padding(14)
         .frame(maxWidth: .infinity)
-        .frame(height: 165) // Enforces perfectly square geometry matching screenshots
+        .frame(height: 165)
         .background(GlassBackground(cornerRadius: 18))
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(title) details")
+        .accessibilityValue("\(value) \(unit)")
     }
 }
-
-// MARK: - Updated Slider Track
 
 struct SliderTrack: View {
     let progress: Double
@@ -175,15 +168,12 @@ struct SliderTrack: View {
     }
 }
 
-// MARK: - Custom Dotted Pressure Gauge
-
 struct DottedPressureGauge: View {
     let progress: Double
     let displayValue: String
     
     var body: some View {
         ZStack {
-            // Circular dotted track background
             Circle()
                 .trim(from: 0.0, to: 0.75)
                 .stroke(
@@ -192,7 +182,6 @@ struct DottedPressureGauge: View {
                 )
                 .rotationEffect(.degrees(135))
             
-            // Indicator Dial Point
             GeometryReader { geo in
                 let angle = 135.0 + (progress * 270.0)
                 let radius = geo.size.width / 2
@@ -206,7 +195,6 @@ struct DottedPressureGauge: View {
                     .position(x: x, y: y)
             }
             
-            // Inline Typography Container
             VStack(spacing: -2) {
                 Text(displayValue)
                     .font(.system(size: 20, weight: .semibold, design: .rounded))

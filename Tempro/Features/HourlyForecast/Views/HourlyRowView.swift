@@ -28,12 +28,14 @@ struct HourlyRowView: View {
             Image(systemName: WeatherIconMapper.sfSymbol(for: hour.condition.code, isDay: isDay))
                 .renderingMode(.original)
                 .font(.system(size: 22))
+                .accessibilityLabel(hour.condition.text)
             
             Spacer()
             
-            Text("\(Int(round(hour.temp_c)))°")
+            Text(HomeViewModel.formatTemp(hour.temp_c))
                 .font(.system(size: 17, weight: .bold, design: .rounded))
-                .frame(width: 50, alignment: .trailing)
+                .frame(width: 60, alignment: .trailing)
+                .accessibilityValue(HomeViewModel.formatTemp(hour.temp_c))
         }
         .foregroundColor(isMorning ? .black : .white)
         .padding(.horizontal, 20)

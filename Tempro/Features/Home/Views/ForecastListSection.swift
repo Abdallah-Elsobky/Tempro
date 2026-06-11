@@ -9,11 +9,11 @@ struct ForecastListSection: View {
         let globalMax = forecastDays.map { $0.day.maxtemp_c }.max() ?? 100
         
         VStack(alignment: .leading, spacing: 0) {
-            // Section header inside card
             HStack(spacing: 6) {
                 Image(systemName: "calendar")
                     .foregroundColor(.white.opacity(0.55))
                     .font(.system(size: 13, weight: .semibold))
+                    .accessibilityLabel("Calendar icon")
                 
                 Text("3-DAY FORECAST")
                     .font(.system(size: 12, weight: .bold, design: .rounded))
@@ -27,7 +27,6 @@ struct ForecastListSection: View {
             Divider()
                 .background(Color.white.opacity(0.2))
             
-            // Forecast rows
             ForEach(Array(forecastDays.prefix(3).enumerated()), id: \.element.id) { index, day in
                 NavigationLink {
                     HourlyForecastView(selectedDay: day, isMorning: viewModel.isMorning)
@@ -40,6 +39,7 @@ struct ForecastListSection: View {
                     )
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel("Forecast for \(DateHelper.dayLabel(from: day.date, index: index)), high \(HomeViewModel.formatTemp(day.day.maxtemp_c)), low \(HomeViewModel.formatTemp(day.day.mintemp_c))")
                 
                 if index < min(forecastDays.count, 3) - 1 {
                     Divider()
@@ -52,8 +52,6 @@ struct ForecastListSection: View {
     }
 }
 
-// MARK: - Forecast Row
-
 struct ForecastRowView: View {
     let day: ForecastDay
     let index: Int
@@ -62,27 +60,25 @@ struct ForecastRowView: View {
     
     var body: some View {
         HStack(spacing: 0) {
-            // Day label — fixed width
             Text(DateHelper.dayLabel(from: day.date, index: index))
                 .font(.system(size: 16, weight: .semibold, design: .rounded))
                 .foregroundColor(.white)
                 .frame(width: 84, alignment: .leading)
             
-            // Weather icon
             Image(systemName: WeatherIconMapper.sfSymbol(for: day.day.condition.code, isDay: true))
                 .renderingMode(.original)
                 .font(.system(size: 22))
                 .frame(width: 36, alignment: .center)
+                .accessibilityLabel(day.day.condition.text)
             
             Spacer(minLength: 8)
             
-            // Min temp
-            Text("\(Int(round(day.day.mintemp_c)))°")
+            Text(HomeViewModel.formatTemp(day.day.mintemp_c))
                 .font(.system(size: 15, weight: .regular, design: .rounded))
                 .foregroundColor(.white.opacity(0.5))
-                .frame(width: 28, alignment: .trailing)
+                .frame(width: 40, alignment: .trailing)
+                .accessibilityValue("Minimum temperature \(HomeViewModel.formatTemp(day.day.mintemp_c))")
             
-            // Temperature range bar
             TemperatureRangeBar(
                 minTemp: day.day.mintemp_c,
                 maxTemp: day.day.maxtemp_c,
@@ -91,19 +87,17 @@ struct ForecastRowView: View {
             )
             .padding(.horizontal, 8)
             
-            // Max temp
-            Text("\(Int(round(day.day.maxtemp_c)))°")
+            Text(HomeViewModel.formatTemp(day.day.maxtemp_c))
                 .font(.system(size: 15, weight: .semibold, design: .rounded))
                 .foregroundColor(.white)
-                .frame(width: 28, alignment: .trailing)
+                .frame(width: 40, alignment: .trailing)
+                .accessibilityValue("Maximum temperature \(HomeViewModel.formatTemp(day.day.maxtemp_c))")
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
         .contentShape(Rectangle())
     }
 }
-
-// MARK: - Temperature Range Bar
 
 struct TemperatureRangeBar: View {
     let minTemp: Double
@@ -119,12 +113,10 @@ struct TemperatureRangeBar: View {
             let barWidth = range > 0 ? CGFloat(dayRange / range) * geo.size.width : geo.size.width
             
             ZStack(alignment: .leading) {
-                // Track
                 Capsule()
                     .fill(Color.white.opacity(0.18))
                     .frame(height: 5)
                 
-                // Filled range
                 Capsule()
                     .fill(
                         LinearGradient(

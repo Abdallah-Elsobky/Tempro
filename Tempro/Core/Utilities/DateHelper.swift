@@ -1,9 +1,7 @@
 import Foundation
 
-/// DateHelper contains utility methods for date formatting and manipulation.
 struct DateHelper {
     static func isMorning() -> Bool {
-        // Returns true if current time is between 05:00 and 18:00 (5:00 AM to 6:00 PM inclusive)
         let calendar = Calendar.current
         let components = calendar.dateComponents([.hour, .minute], from: Date())
         let hour = components.hour ?? 0
@@ -13,7 +11,6 @@ struct DateHelper {
     }
     
     static func dayLabel(from dateString: String, index: Int) -> String {
-        // index 0 → "Today", index 1 → "Tomorrow", index 2 → third day name
         if index == 0 { return "Today" }
         if index == 1 { return "Tomorrow" }
         
@@ -27,7 +24,6 @@ struct DateHelper {
     }
     
     static func hourLabel(from timeString: String) -> String {
-        // "2026-06-10 14:00" → "2 PM" or "Now" if current hour
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd HH:mm"
         formatter.locale = Locale(identifier: "en_US_POSIX")
@@ -41,8 +37,7 @@ struct DateHelper {
             return "Now"
         }
         
-        formatter.dateFormat = "h a" // "2 PM"
+        formatter.dateFormat = "h a"
         return formatter.string(from: date)
     }
 }
-

@@ -1,6 +1,5 @@
 import Foundation
 
-/// ForecastDay represents weather forecast details for a single day.
 struct ForecastDay: Codable, Identifiable, Sendable {
     var id: String { date }
     let date: String
@@ -13,4 +12,3 @@ struct DayInfo: Codable, Sendable {
     let mintemp_c: Double
     let condition: WeatherCondition
 }
-

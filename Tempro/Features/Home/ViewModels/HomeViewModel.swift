@@ -65,13 +65,19 @@ final class HomeViewModel: ObservableObject {
         }
     }
     
+    static func formatTemp(_ value: Double) -> String {
+        let isFahrenheit = UserDefaults.standard.bool(forKey: "tempro_use_fahrenheit")
+        let converted = isFahrenheit ? (value * 9/5 + 32) : value
+        return "\(Int(round(converted)))°"
+    }
+    
     var locationName: String {
         weatherData?.location.name ?? "--"
     }
     
     var currentTemp: String {
         if let temp = weatherData?.current.temp_c {
-            return "\(Int(round(temp)))°"
+            return HomeViewModel.formatTemp(temp)
         }
         return "--"
     }
@@ -82,14 +88,14 @@ final class HomeViewModel: ObservableObject {
     
     var maxTemp: String {
         if let max = weatherData?.forecast.forecastday.first?.day.maxtemp_c {
-            return "H: \(Int(round(max)))°"
+            return "H: \(HomeViewModel.formatTemp(max))"
         }
         return "H: --"
     }
     
     var minTemp: String {
         if let min = weatherData?.forecast.forecastday.first?.day.mintemp_c {
-            return "L: \(Int(round(min)))°"
+            return "L: \(HomeViewModel.formatTemp(min))"
         }
         return "L: --"
     }
@@ -118,7 +124,7 @@ final class HomeViewModel: ObservableObject {
     
     var feelsLike: String {
         if let feels = weatherData?.current.feelslike_c {
-            return "\(Int(round(feels)))°"
+            return HomeViewModel.formatTemp(feels)
         }
         return "--"
     }
@@ -274,4 +280,3 @@ final class HomeViewModel: ObservableObject {
         ]
     }
 }
-

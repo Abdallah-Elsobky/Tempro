@@ -8,15 +8,6 @@ struct HourlyForecastView: View {
         _viewModel = StateObject(wrappedValue: HourlyForecastViewModel(selectedDay: selectedDay, isMorning: isMorning))
     }
     
-    private var weatherOverlayGradient: LinearGradient {
-        let baseColor = WeatherIconMapper.conditionColor(for: viewModel.selectedDay?.day.condition.code ?? 1000)
-        return LinearGradient(
-            colors: [baseColor.opacity(0.12), baseColor.opacity(0.28)],
-            startPoint: .top,
-            endPoint: .bottom
-        )
-    }
-    
     var body: some View {
         ZStack {
             GeometryReader { proxy in
@@ -24,11 +15,9 @@ struct HourlyForecastView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: proxy.size.width, height: proxy.size.height)
+                    .accessibilityLabel("Weather background")
             }
             .ignoresSafeArea()
-            
-            weatherOverlayGradient
-                .ignoresSafeArea()
             
             VStack(spacing: 0) {
                 HStack {
@@ -38,11 +27,15 @@ struct HourlyForecastView: View {
                         HStack(spacing: 4) {
                             Image(systemName: "chevron.left")
                                 .font(.system(size: 17, weight: .semibold))
+                                .accessibilityLabel("Back icon")
                             Text("Weather")
                                 .font(.system(size: 17, weight: .regular))
                         }
                         .foregroundColor(viewModel.isMorning ? .black : .white)
+                        .frame(minWidth: 44, minHeight: 44)
                     }
+                    .accessibilityLabel("Back to main weather screen")
+                    
                     Spacer()
                     
                     Text(viewModel.dayTitle)
@@ -62,6 +55,7 @@ struct HourlyForecastView: View {
                             Image(systemName: "clock")
                                 .foregroundColor(viewModel.isMorning ? .black.opacity(0.55) : .white.opacity(0.55))
                                 .font(.system(size: 13, weight: .semibold))
+                                .accessibilityLabel("Clock icon")
                             
                             Text("HOURLY FORECAST")
                                 .font(.system(size: 12, weight: .bold, design: .rounded))
@@ -126,4 +120,3 @@ extension ForecastDay {
     HourlyForecastView(selectedDay: .previewMock, isMorning: true)
 }
 #endif
-

@@ -23,12 +23,11 @@ struct SearchView: View {
                     } else if !viewModel.searchText.isEmpty {
                         if viewModel.searchResults.isEmpty {
                             VStack(spacing: 8) {
-                                Text("No cities found")
+                                Text("No cities found for '\(viewModel.searchText)'")
                                     .font(.system(size: 17, weight: .semibold, design: .rounded))
                                     .foregroundColor(.white)
-                                Text("Try searching for another city name.")
-                                    .font(.system(size: 14, weight: .regular, design: .rounded))
-                                    .foregroundColor(.white.opacity(0.6))
+                                    .multilineTextAlignment(.center)
+                                    .padding(.horizontal, 24)
                             }
                             .padding(.top, 40)
                             Spacer()
@@ -43,12 +42,10 @@ struct SearchView: View {
                                 Image(systemName: "magnifyingglass")
                                     .font(.system(size: 48))
                                     .foregroundColor(.white.opacity(0.3))
-                                Text("Search Globally")
+                                    .accessibilityLabel("Magnifying glass icon")
+                                Text("Start typing to search globally")
                                     .font(.system(size: 17, weight: .semibold, design: .rounded))
                                     .foregroundColor(.white.opacity(0.6))
-                                Text("Find weather forecasts for any city.")
-                                    .font(.system(size: 14, weight: .regular, design: .rounded))
-                                    .foregroundColor(.white.opacity(0.4))
                             }
                             .padding(.top, 60)
                             Spacer()
@@ -64,6 +61,8 @@ struct SearchView: View {
                         dismiss()
                     }
                     .foregroundColor(.blue)
+                    .frame(minWidth: 44, minHeight: 44)
+                    .accessibilityLabel("Done")
                 }
             }
             .toolbarBackground(.visible, for: .navigationBar)
@@ -77,6 +76,7 @@ struct SearchView: View {
         HStack {
             Image(systemName: "magnifyingglass")
                 .foregroundColor(.white.opacity(0.6))
+                .accessibilityLabel("Search icon")
             
             TextField("Search for a city...", text: $viewModel.searchText)
                 .foregroundColor(.white)
@@ -84,6 +84,7 @@ struct SearchView: View {
                 .onChange(of: viewModel.searchText) { _ in
                     viewModel.search()
                 }
+                .accessibilityLabel("City name search field")
             
             if !viewModel.searchText.isEmpty {
                 Button(action: {
@@ -92,10 +93,13 @@ struct SearchView: View {
                 }) {
                     Image(systemName: "xmark.circle.fill")
                         .foregroundColor(.white.opacity(0.6))
+                        .frame(width: 44, height: 44)
                 }
+                .accessibilityLabel("Clear search text")
             }
         }
-        .padding(12)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
         .background(Color.white.opacity(0.08))
         .cornerRadius(12)
         .padding(.horizontal)
@@ -125,6 +129,8 @@ struct SearchView: View {
                             Image(systemName: "plus.circle.fill")
                                 .foregroundColor(.blue)
                                 .font(.system(size: 20))
+                                .frame(width: 44, height: 44)
+                                .accessibilityLabel("Add \(result.name) to saved locations")
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 14)
@@ -136,6 +142,7 @@ struct SearchView: View {
                         )
                     }
                     .buttonStyle(.plain)
+                    .accessibilityLabel("Location result: \(result.name), \(result.country)")
                 }
             }
             .padding(.horizontal)

@@ -1,6 +1,5 @@
 import Foundation
 
-/// WeatherResponse represents the top-level weather data API response.
 struct WeatherResponse: Codable, Sendable {
     let location: LocationInfo
     let current: CurrentWeather
@@ -32,4 +31,3 @@ struct WeatherCondition: Codable, Sendable {
 struct ForecastContainer: Codable, Sendable {
     let forecastday: [ForecastDay]
 }
-
