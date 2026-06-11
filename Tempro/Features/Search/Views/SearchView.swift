@@ -55,16 +55,6 @@ struct SearchView: View {
             }
             .navigationTitle("Search")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Done") {
-                        dismiss()
-                    }
-                    .foregroundColor(.blue)
-                    .frame(minWidth: 44, minHeight: 44)
-                    .accessibilityLabel("Done")
-                }
-            }
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarBackground(Color.clear, for: .navigationBar)
             .preferredColorScheme(.dark)

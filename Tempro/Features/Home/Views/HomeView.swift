@@ -157,11 +157,13 @@ struct HomeView: View {
     
     private var backgroundLayer: some View {
         GeometryReader { proxy in
-            Image(activeViewModel.isMorning ? "morning_bg" : "evening_bg")
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: proxy.size.width, height: proxy.size.height)
-                .accessibilityLabel("Weather background")
+            ZStack {
+                Image(activeViewModel.isMorning ? "morning_bg" : "evening_bg")
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: proxy.size.width, height: proxy.size.height)
+                Color.black.opacity(0.3)
+            }
         }
         .ignoresSafeArea()
         .animation(.easeInOut(duration: 0.5), value: activeViewModel.isMorning)
@@ -180,28 +182,6 @@ struct HomeView: View {
     
     private var floatingBottomTabBar: some View {
         HStack {
-            Button(action: { }) {
-                Image(systemName: "map")
-                    .font(.system(size: 21, weight: .regular))
-                    .frame(width: 44, height: 44)
-                    .contentShape(Rectangle())
-            }
-            .accessibilityLabel("Map")
-            
-            Spacer().frame(width: 30)
-            
-            Button(action: {
-                useFahrenheit.toggle()
-            }) {
-                Image(systemName: "gearshape")
-                    .font(.system(size: 21, weight: .regular))
-                    .frame(width: 44, height: 44)
-                    .contentShape(Rectangle())
-            }
-            .accessibilityLabel("Toggle temperature unit")
-            
-            Spacer().frame(width: 30)
-            
             Button(action: { showSearch = true }) {
                 Image(systemName: "list.bullet")
                     .font(.system(size: 21, weight: .regular))

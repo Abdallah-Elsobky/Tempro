@@ -35,7 +35,8 @@ struct ForecastListSection: View {
                         day: day,
                         index: index,
                         globalMin: globalMin,
-                        globalMax: globalMax
+                        globalMax: globalMax,
+                        isMorning: viewModel.isMorning
                     )
                 }
                 .buttonStyle(.plain)
@@ -57,6 +58,7 @@ struct ForecastRowView: View {
     let index: Int
     let globalMin: Double
     let globalMax: Double
+    let isMorning: Bool
     
     var body: some View {
         HStack(spacing: 0) {
@@ -65,7 +67,7 @@ struct ForecastRowView: View {
                 .foregroundColor(.white)
                 .frame(width: 84, alignment: .leading)
             
-            Image(systemName: WeatherIconMapper.sfSymbol(for: day.day.condition.code, isDay: true))
+            Image(systemName: WeatherIconMapper.sfSymbol(for: day.day.condition.code, isDay: isMorning))
                 .renderingMode(.original)
                 .font(.system(size: 22))
                 .frame(width: 36, alignment: .center)

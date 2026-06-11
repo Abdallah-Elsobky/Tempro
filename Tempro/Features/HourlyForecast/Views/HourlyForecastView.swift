@@ -18,7 +18,7 @@ struct HourlyForecastView: View {
                     .accessibilityLabel("Weather background")
             }
             .ignoresSafeArea()
-            
+            Color.black.opacity(0.3).ignoresSafeArea()
             VStack(spacing: 0) {
                 HStack {
                     Button(action: {
