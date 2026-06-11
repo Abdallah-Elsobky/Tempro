@@ -2,10 +2,14 @@ import SwiftUI
 
 struct LocationWeatherPageView: View {
     let fixedLocation: SavedLocation?
+    let pageIndex: Int
+    let totalPages: Int
     @StateObject private var viewModel: HomeViewModel
     
-    init(fixedLocation: SavedLocation?) {
+    init(fixedLocation: SavedLocation?, pageIndex: Int = 0, totalPages: Int = 1) {
         self.fixedLocation = fixedLocation
+        self.pageIndex = pageIndex
+        self.totalPages = totalPages
         _viewModel = StateObject(wrappedValue: HomeViewModel(fixedLocation: fixedLocation))
     }
     
@@ -49,6 +53,17 @@ struct LocationWeatherPageView: View {
         VStack(spacing: 4) {
             Text(viewModel.locationName)
                 .font(.system(size: 34, weight: .medium, design: .rounded))
+            
+            if totalPages > 1 {
+                HStack(spacing: 6) {
+                    ForEach(0..<totalPages, id: \.self) { idx in
+                        Circle()
+                            .fill(idx == pageIndex ? Color.white : Color.white.opacity(0.4))
+                            .frame(width: 7, height: 7)
+                    }
+                }
+                .padding(.vertical, 4)
+            }
             
             Text(viewModel.currentTemp)
                 .font(.system(size: 96, weight: .thin, design: .rounded))

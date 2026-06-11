@@ -8,16 +8,17 @@ struct HomeView: View {
     
     var body: some View {
         ZStack {
+            let totalPages = locationsStore.savedLocations.count + 1
             TabView(selection: $activeTab) {
-                LocationWeatherPageView(fixedLocation: nil)
+                LocationWeatherPageView(fixedLocation: nil, pageIndex: 0, totalPages: totalPages)
                     .tag(0)
                 
                 ForEach(Array(locationsStore.savedLocations.enumerated()), id: \.element.id) { index, loc in
-                    LocationWeatherPageView(fixedLocation: loc)
+                    LocationWeatherPageView(fixedLocation: loc, pageIndex: index + 1, totalPages: totalPages)
                         .tag(index + 1)
                 }
             }
-            .tabViewStyle(.page(indexDisplayMode: .always))
+            .tabViewStyle(.page(indexDisplayMode: .never))
             .ignoresSafeArea()
             
             VStack {

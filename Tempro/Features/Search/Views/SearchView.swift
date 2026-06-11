@@ -69,6 +69,7 @@ struct SearchView: View {
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarBackground(Color.clear, for: .navigationBar)
             .preferredColorScheme(.dark)
+            .background(Color.clear)
         }
     }
     
