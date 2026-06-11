@@ -68,7 +68,7 @@ final class HomeViewModel: ObservableObject {
     static func formatTemp(_ value: Double) -> String {
         let isFahrenheit = UserDefaults.standard.bool(forKey: "tempro_use_fahrenheit")
         let converted = isFahrenheit ? (value * 9/5 + 32) : value
-        return "\(Int(round(converted)))°"
+        return "\(Int(round(converted)))°\(isFahrenheit ? "F" : "C")"
     }
     
     var locationName: String {
