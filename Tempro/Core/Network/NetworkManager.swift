@@ -17,7 +17,9 @@ final class NetworkManager: NetworkManagerProtocol {
         }
         
         do {
-            return try await AF.request(url)
+            var urlRequest = URLRequest(url: url)
+            urlRequest.cachePolicy = .reloadIgnoringLocalCacheData
+            return try await AF.request(urlRequest)
                 .validate()
                 .serializingDecodable(WeatherResponse.self)
                 .value
@@ -27,6 +29,15 @@ final class NetworkManager: NetworkManagerProtocol {
                    case .unacceptableStatusCode(let code) = reason {
                     throw NetworkError.serverError(code)
                 }
+                // Check for session-level errors (no internet, DNS failure, etc.)
+                if case .sessionTaskFailed(let urlError as URLError) = afError {
+                    throw NetworkError.noConnection(urlError)
+                }
+            }
+            // Also catch URLError directly if it wasn't wrapped by Alamofire
+            if let urlError = error as? URLError,
+               urlError.code == .notConnectedToInternet || urlError.code == .timedOut || urlError.code == .networkConnectionLost {
+                throw NetworkError.noConnection(urlError)
             }
             throw NetworkError.decodingFailed(error)
         }
@@ -38,7 +49,9 @@ final class NetworkManager: NetworkManagerProtocol {
         }
         
         do {
-            return try await AF.request(url)
+            var urlRequest = URLRequest(url: url)
+            urlRequest.cachePolicy = .reloadIgnoringLocalCacheData
+            return try await AF.request(urlRequest)
                 .validate()
                 .serializingDecodable([SearchResult].self)
                 .value
@@ -48,6 +61,13 @@ final class NetworkManager: NetworkManagerProtocol {
                    case .unacceptableStatusCode(let code) = reason {
                     throw NetworkError.serverError(code)
                 }
+                if case .sessionTaskFailed(let urlError as URLError) = afError {
+                    throw NetworkError.noConnection(urlError)
+                }
+            }
+            if let urlError = error as? URLError,
+               urlError.code == .notConnectedToInternet || urlError.code == .timedOut || urlError.code == .networkConnectionLost {
+                throw NetworkError.noConnection(urlError)
             }
             throw NetworkError.decodingFailed(error)
         }
@@ -60,6 +80,7 @@ enum NetworkError: Error, LocalizedError, Sendable {
     case noData
     case decodingFailed(Error)
     case serverError(Int)
+    case noConnection(URLError)
     
     var errorDescription: String? {
         switch self {
@@ -71,6 +92,8 @@ enum NetworkError: Error, LocalizedError, Sendable {
             return "Failed to decode the weather data: \(error.localizedDescription)"
         case .serverError(let code):
             return "The server returned an error status code: \(code)."
+        case .noConnection:
+            return "No internet connection. Please check your network and try again."
         }
     }
 }

@@ -7,7 +7,7 @@ final class HomeViewModel: ObservableObject {
     @Published var weatherData: WeatherResponse? = nil
     @Published var isLoading: Bool = false
     @Published var errorMessage: String? = nil
-    @Published var isMorning: Bool = true
+    @Published var isMorning: Bool = DateHelper.isMorning()
     
     private let networkManager: NetworkManagerProtocol
     private let locationManager: LocationManager

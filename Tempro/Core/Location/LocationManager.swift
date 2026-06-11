@@ -15,11 +15,23 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
         manager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
     }
     
+    /// Clears any stale location/error state so a fresh request can be made.
+    func reset() {
+        currentLocation = nil
+        locationError = nil
+        manager.stopUpdatingLocation()
+    }
+    
     func requestLocation() {
+        // Always reset before a new request to avoid stale state on retries
+        reset()
+        
         if manager.authorizationStatus == .notDetermined {
             manager.requestWhenInUseAuthorization()
         } else if manager.authorizationStatus == .authorizedWhenInUse || manager.authorizationStatus == .authorizedAlways {
             manager.startUpdatingLocation()
+        } else if manager.authorizationStatus == .denied || manager.authorizationStatus == .restricted {
+            locationError = "Location access denied. Please enable it in Settings."
         }
     }
     
