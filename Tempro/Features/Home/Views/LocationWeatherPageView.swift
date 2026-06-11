@@ -85,10 +85,13 @@ struct LocationWeatherPageView: View {
     
     private var backgroundLayer: some View {
         GeometryReader { proxy in
-            Image(viewModel.isMorning ? "morning_bg" : "evening_bg")
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: proxy.size.width, height: proxy.size.height)
+            ZStack {
+                Image(viewModel.isMorning ? "morning_bg" : "evening_bg")
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: proxy.size.width, height: proxy.size.height)
+                Color.black.opacity(0.3)
+            }
         }
         .ignoresSafeArea()
     }

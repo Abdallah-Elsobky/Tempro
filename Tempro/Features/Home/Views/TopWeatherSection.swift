@@ -12,17 +12,6 @@ struct TopWeatherSection: View {
                 .foregroundColor(.white)
                 .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
             
-            if totalPages > 1 {
-                HStack(spacing: 6) {
-                    ForEach(0..<totalPages, id: \.self) { idx in
-                        Circle()
-                            .fill(idx == pageIndex ? Color.white : Color.white.opacity(0.4))
-                            .frame(width: 7, height: 7)
-                    }
-                }
-                .padding(.vertical, 4)
-            }
-            
             Text(viewModel.currentTemp)
                 .font(.system(size: 96, weight: .thin, design: .rounded))
                 .foregroundColor(.white)

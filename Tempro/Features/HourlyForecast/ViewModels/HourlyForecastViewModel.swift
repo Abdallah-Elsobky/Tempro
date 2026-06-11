@@ -11,6 +11,10 @@ final class HourlyForecastViewModel: ObservableObject {
         self.isMorning = isMorning
     }
     
+    var conditionCode: Int {
+        selectedDay?.day.condition.code ?? 1000
+    }
+    
     var visibleHours: [HourlyForecast] {
         guard let day = selectedDay else { return [] }
         

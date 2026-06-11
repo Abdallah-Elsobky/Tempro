@@ -4,6 +4,7 @@ struct SearchView: View {
     @StateObject private var viewModel = SearchViewModel()
     @EnvironmentObject var locationsStore: LocationsStore
     @Binding var activeTab: Int
+    var savedViewModels: [UUID: HomeViewModel] = [:]
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -36,7 +37,7 @@ struct SearchView: View {
                         }
                     } else {
                         if !locationsStore.savedLocations.isEmpty {
-                            SavedLocationsView(activeTab: $activeTab)
+                            SavedLocationsView(activeTab: $activeTab, savedViewModels: savedViewModels)
                         } else {
                             VStack(spacing: 8) {
                                 Image(systemName: "magnifyingglass")
@@ -90,8 +91,19 @@ struct SearchView: View {
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 6)
-        .background(Color.white.opacity(0.08))
-        .cornerRadius(12)
+        .background(.ultraThinMaterial)
+        .cornerRadius(14)
+        .overlay(
+            RoundedRectangle(cornerRadius: 14)
+                .stroke(
+                    LinearGradient(
+                        colors: [Color.white.opacity(0.2), Color.white.opacity(0.05)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 0.8
+                )
+        )
         .padding(.horizontal)
     }
     
@@ -141,7 +153,7 @@ struct SearchView: View {
 }
 
 #Preview {
-    SearchView(activeTab: .constant(0))
+    SearchView(activeTab: .constant(0), savedViewModels: [:])
         .environmentObject(LocationsStore())
         .background(Color.black.opacity(0.85))
 }

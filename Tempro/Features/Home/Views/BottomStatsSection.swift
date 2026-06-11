@@ -19,11 +19,11 @@ struct BottomStatsSection: View {
                 VStack(alignment: .leading, spacing: 4) {
                     let relative = (viewModel.rawFeelsLike + 10.0) / 55.0
                     let capped = max(0, min(1.0, relative))
-                    SliderTrack(progress: capped)
+                    SliderTrack(progress: capped, activeColor: .white.opacity(0.65))
                         .padding(.vertical, 4)
                     
                     Text(viewModel.rawFeelsLike < 15 ? "Wind is making it feel cooler." : "Similar to the actual temperature.")
-                        .font(.system(size: 13, weight: .regular, design: .rounded))
+                        .font(.system(size: 12, weight: .regular, design: .rounded))
                         .foregroundColor(.white.opacity(0.75))
                         .lineLimit(2)
                         .fixedSize(horizontal: false, vertical: true)
@@ -37,7 +37,7 @@ struct BottomStatsSection: View {
                 unit: "%"
             ) {
                 Text("Dry weather, stay hydrated.")
-                    .font(.system(size: 13, weight: .regular, design: .rounded))
+                    .font(.system(size: 12, weight: .regular, design: .rounded))
                     .foregroundColor(.white.opacity(0.75))
                     .lineLimit(2)
                     .fixedSize(horizontal: false, vertical: true)
@@ -57,14 +57,14 @@ struct BottomStatsSection: View {
                         Spacer()
                         Text("High")
                     }
-                    .font(.system(size: 10, weight: .medium, design: .rounded))
+                    .font(.system(size: 9, weight: .medium, design: .rounded))
                     .foregroundColor(.white.opacity(0.4))
                     
-                    SliderTrack(progress: min(viewModel.rawVisibility / 10.0, 1.0))
+                    SliderTrack(progress: min(viewModel.rawVisibility / 10.0, 1.0), activeColor: .white.opacity(0.65))
                         .padding(.bottom, 6)
                     
                     Text(viewModel.rawVisibility >= 10.0 ? "Excellent visibility." : "Light haze reducing visibility.")
-                        .font(.system(size: 13, weight: .regular, design: .rounded))
+                        .font(.system(size: 12, weight: .regular, design: .rounded))
                         .foregroundColor(.white.opacity(0.75))
                         .lineLimit(1)
                 }
@@ -87,7 +87,7 @@ struct BottomStatsSection: View {
                     Spacer(minLength: 0)
                     
                     Text(viewModel.rawPressure > 1013 ? "Slightly high pressure, comfortable." : "Low atmospheric pressure.")
-                        .font(.system(size: 13, weight: .regular, design: .rounded))
+                        .font(.system(size: 12, weight: .regular, design: .rounded))
                         .foregroundColor(.white.opacity(0.75))
                         .lineLimit(2)
                         .fixedSize(horizontal: false, vertical: true)
@@ -106,22 +106,26 @@ struct StatCard<Footer: View>: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HStack(spacing: 5) {
+            HStack(spacing: 8) {
                 Image(systemName: icon)
                     .font(.system(size: 12, weight: .bold))
+                    .foregroundColor(.white.opacity(0.7))
+                    .frame(width: 26, height: 26)
+                    .background(Color.white.opacity(0.08))
+                    .clipShape(Circle())
                     .accessibilityLabel("\(title) icon")
                 Text(title)
-                    .font(.system(size: 13, weight: .semibold, design: .rounded))
+                    .font(.system(size: 13, weight: .bold, design: .rounded))
             }
-            .foregroundColor(.white.opacity(0.6))
-            .padding(.bottom, 6)
+            .foregroundColor(.white.opacity(0.7))
+            .padding(.bottom, 8)
             
             if !value.isEmpty {
                 Group {
                     Text(value)
-                        .font(.system(size: 38, weight: .medium, design: .rounded))
+                        .font(.system(size: 38, weight: .semibold, design: .rounded))
                     + Text(unit.isEmpty ? "" : " \(unit)")
-                        .font(.system(size: 18, weight: .medium, design: .rounded))
+                        .font(.system(size: 16, weight: .medium, design: .rounded))
                 }
                 .foregroundColor(.white)
                 .lineLimit(1)
@@ -145,17 +149,22 @@ struct StatCard<Footer: View>: View {
 
 struct SliderTrack: View {
     let progress: Double
+    var activeColor: Color = .white
     
     var body: some View {
         GeometryReader { geo in
             let pct = CGFloat(max(0, min(progress, 1.0)))
-            let knobSize: CGFloat = 6
+            let knobSize: CGFloat = 8
             let knobX = pct * (geo.size.width - knobSize)
             
             ZStack(alignment: .leading) {
                 Capsule()
-                    .fill(Color.white.opacity(0.2))
-                    .frame(height: 4)
+                    .fill(Color.white.opacity(0.15))
+                    .frame(height: 5)
+                
+                Capsule()
+                    .fill(activeColor)
+                    .frame(width: knobX + knobSize / 2, height: 5)
                 
                 Circle()
                     .fill(Color.white)
@@ -164,7 +173,7 @@ struct SliderTrack: View {
             }
             .frame(maxHeight: .infinity)
         }
-        .frame(height: 6)
+        .frame(height: 8)
     }
 }
 
@@ -177,33 +186,33 @@ struct DottedPressureGauge: View {
             Circle()
                 .trim(from: 0.0, to: 0.75)
                 .stroke(
-                    Color.white.opacity(0.25),
-                    style: StrokeStyle(lineWidth: 3, lineCap: .round, dash: [1, 3])
+                    Color.white.opacity(0.15),
+                    style: StrokeStyle(lineWidth: 4.5, lineCap: .round)
                 )
                 .rotationEffect(.degrees(135))
             
-            GeometryReader { geo in
-                let angle = 135.0 + (progress * 270.0)
-                let radius = geo.size.width / 2
-                let center = CGPoint(x: radius, y: radius)
-                let x = center.x + radius * cos(Angle(degrees: angle).radians)
-                let y = center.y + radius * sin(Angle(degrees: angle).radians)
-                
-                Circle()
-                    .fill(Color.white)
-                    .frame(width: 5, height: 5)
-                    .position(x: x, y: y)
-            }
+            Circle()
+                .trim(from: 0.0, to: CGFloat(progress) * 0.75)
+                .stroke(
+                    LinearGradient(
+                        colors: [Color.white.opacity(0.35), Color.white.opacity(0.75)],
+                        startPoint: .bottomLeading,
+                        endPoint: .topTrailing
+                    ),
+                    style: StrokeStyle(lineWidth: 4.5, lineCap: .round)
+                )
+                .rotationEffect(.degrees(135))
+                .shadow(color: Color.white.opacity(0.1), radius: 3)
             
-            VStack(spacing: -2) {
+            VStack(spacing: -1) {
                 Text(displayValue)
-                    .font(.system(size: 20, weight: .semibold, design: .rounded))
+                    .font(.system(size: 18, weight: .bold, design: .rounded))
                     .foregroundColor(.white)
                 Text("hPa")
-                    .font(.system(size: 10, weight: .medium, design: .rounded))
+                    .font(.system(size: 9, weight: .bold, design: .rounded))
                     .foregroundColor(.white.opacity(0.5))
             }
         }
-        .frame(width: 68, height: 68)
+        .frame(width: 70, height: 70)
     }
 }

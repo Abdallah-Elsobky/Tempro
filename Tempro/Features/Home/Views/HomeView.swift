@@ -89,6 +89,9 @@ struct HomeView: View {
                     VStack(spacing: 20) {
                         let totalPages = locationsStore.savedLocations.count + 1
                         
+                        LocationPillsHeader(activeTab: $activeTab, savedLocations: locationsStore.savedLocations)
+                            .padding(.top, 30)
+                        
                         TabView(selection: $activeTab) {
                             TopWeatherSection(viewModel: currentViewModel, pageIndex: 0, totalPages: totalPages)
                                 .tag(0)
@@ -104,8 +107,7 @@ struct HomeView: View {
                             }
                         }
                         .tabViewStyle(.page(indexDisplayMode: .never))
-                        .frame(height: 270)
-                        .padding(.top, 40)
+                        .frame(height: 220)
                         
                         ForecastListSection(viewModel: activeViewModel)
                         
@@ -127,11 +129,16 @@ struct HomeView: View {
             }
         }
         .sheet(isPresented: $showSearch) {
-            SearchView(activeTab: $activeTab)
+            SearchView(activeTab: $activeTab, savedViewModels: savedViewModels)
                 .presentationBackground(.ultraThinMaterial)
         }
         .task {
             syncViewModels()
+            for vm in savedViewModels.values {
+                Task {
+                    await vm.loadWeather()
+                }
+            }
             await activeViewModel.loadWeather()
         }
         .onChange(of: activeTab) { _ in
@@ -175,7 +182,11 @@ struct HomeView: View {
         
         for loc in locationsStore.savedLocations {
             if savedViewModels[loc.id] == nil {
-                savedViewModels[loc.id] = HomeViewModel(fixedLocation: loc)
+                let vm = HomeViewModel(fixedLocation: loc)
+                savedViewModels[loc.id] = vm
+                Task {
+                    await vm.loadWeather()
+                }
             }
         }
     }
@@ -215,12 +226,95 @@ struct GlassBackground: View {
     
     var body: some View {
         RoundedRectangle(cornerRadius: cornerRadius)
-            .fill(Color.white.opacity(0.03))
+            .fill(
+                LinearGradient(
+                    colors: [Color.white.opacity(0.06), Color.white.opacity(0.02)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
             .background(.ultraThinMaterial)
             .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius)
-                    .stroke(Color.white.opacity(0.12), lineWidth: 0.5)
+                    .stroke(
+                        LinearGradient(
+                            colors: [Color.white.opacity(0.18), Color.white.opacity(0.03)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 0.8
+                    )
             )
+            .shadow(color: Color.black.opacity(0.12), radius: 10, x: 0, y: 6)
+    }
+}
+// AmbientAuraView removed for simpler background style
+
+struct LocationPillsHeader: View {
+    @Binding var activeTab: Int
+    let savedLocations: [SavedLocation]
+    
+    var body: some View {
+        ScrollViewReader { scrollProxy in
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    Button(action: {
+                        withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) {
+                            activeTab = 0
+                        }
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "location.fill")
+                                .font(.system(size: 11))
+                            Text("Current")
+                                .font(.system(size: 13, weight: .bold, design: .rounded))
+                        }
+                        .foregroundColor(activeTab == 0 ? .black : .white)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(
+                            Capsule()
+                                .fill(activeTab == 0 ? Color.white : Color.white.opacity(0.12))
+                        )
+                        .overlay(
+                            Capsule()
+                                .stroke(Color.white.opacity(activeTab == 0 ? 0.3 : 0.15), lineWidth: 0.5)
+                        )
+                    }
+                    .id(0)
+                    
+                    ForEach(Array(savedLocations.enumerated()), id: \.element.id) { index, loc in
+                        let tabIndex = index + 1
+                        Button(action: {
+                            withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) {
+                                activeTab = tabIndex
+                            }
+                        }) {
+                            Text(loc.name)
+                                .font(.system(size: 13, weight: .bold, design: .rounded))
+                                .foregroundColor(activeTab == tabIndex ? .black : .white)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(
+                                    Capsule()
+                                        .fill(activeTab == tabIndex ? Color.white : Color.white.opacity(0.12))
+                                )
+                                .overlay(
+                                    Capsule()
+                                        .stroke(Color.white.opacity(activeTab == tabIndex ? 0.3 : 0.15), lineWidth: 0.5)
+                                )
+                        }
+                        .id(tabIndex)
+                    }
+                }
+                .padding(.horizontal, 16)
+            }
+            .onChange(of: activeTab) { targetTab in
+                withAnimation(.spring()) {
+                    scrollProxy.scrollTo(targetTab, anchor: .center)
+                }
+            }
+        }
     }
 }
