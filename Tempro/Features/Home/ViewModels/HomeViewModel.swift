@@ -40,7 +40,8 @@ final class HomeViewModel: ObservableObject {
                 locationManager.requestLocation()
                 
                 var elapsed = 0.0
-                while locationManager.currentLocation == nil && locationManager.locationError == nil && elapsed < 5.0 {
+                // Increased timeout to 60.0 to give the user time to interact with the permission prompt
+                while locationManager.currentLocation == nil && locationManager.locationError == nil && elapsed < 60.0 {
                     try await Task.sleep(nanoseconds: 200_000_000)
                     elapsed += 0.2
                 }
